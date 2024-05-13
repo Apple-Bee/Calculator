@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Design;
 
 namespace Calculator
 {
@@ -7,79 +6,90 @@ namespace Calculator
     {
         static void Main(string[] args)
         {
-            while (true)
+            double num1 = 0;
+            double num2 = 0;
+            char operation = '\0';
+            bool validInput = false;
+
+            // Prompt the user for valid input numbers and operation
+            do
             {
-                Console.WriteLine("Enter the first number:");
-                double num1 = Convert.ToDouble(Console.ReadLine());
+                try
+                {
+                    Console.WriteLine("Enter the first number:");
+                    num1 = Convert.ToDouble(Console.ReadLine());
 
-                Console.WriteLine("Enter the second number:");
-                double num2 = Convert.ToDouble(Console.ReadLine());
+                    Console.WriteLine("Enter the second number:");
+                    num2 = Convert.ToDouble(Console.ReadLine());
 
-                Console.WriteLine("Enter the operation (+, -, *, /):");
-                char operation = Convert.ToChar(Console.ReadLine());
+                    Console.WriteLine("Enter the operation (+, -, *, /):");
+                    operation = Convert.ToChar(Console.ReadLine());
 
-                double result = 0;
+                    // Check if the operation is valid
+                    if (operation == '+' || operation == '-' || operation == '*' || operation == '/')
+                    {
+                        validInput = true;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid operation. Please try again.");
+                    }
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine("Invalid input. Please enter a valid number.");
+                }
+                catch (OverflowException)
+                {
+                    Console.WriteLine("Number out of range. Please enter a smaller number.");
+                }
+            } while (!validInput);
 
+            double result = 0;
+
+            try
+            {
+                // Perform calculation based on the operation
                 switch (operation)
                 {
                     case '+':
-                        result = Add(num1, num2);
+                        result = Calc.Add(num1, num2);
                         break;
                     case '-':
-                        result = Subtract(num1, num2);
+                        result = Calc.Subtract(num1, num2);
                         break;
                     case '*':
-                        result = Multiply(num1, num2);
+                        result = Calc.Multiply(num1, num2);
                         break;
                     case '/':
-                        result = Divide(num1, num2);
+                        result = Calc.Divide(num1, num2);
                         break;
                     default:
                         Console.WriteLine("Invalid operation");
-                        break;
+                        return;
                 }
 
+                // Output the result
                 Console.WriteLine($"Result: {result}");
-
-                Console.WriteLine("Do you want to continue? (Y/N)");
-                char choice = Convert.ToChar(Console.ReadLine());
-
-                if (choice != 'Y' && choice != 'y')
-                {
-                    break;
-                }
             }
-        }
-
-        static double Add(double num1, double num2)
-        {
-            return num1 + num2;
-        }
-
-        static double Subtract(double num1, double num2)
-        {
-            return num1 - num2;
-        }
-
-        static double Multiply(double num1, double num2)
-        {
-            return num1 * num2;
-        }
-
-        static double Divide(double num1, double num2)
-        {
-            if (num1 != 0 && num2 !=0)
-                
+            catch (DivideByZeroException)
             {
-                return num1 / num2;
+                Console.WriteLine("Error: Cannot divide by zero!");
             }
-            else
+            catch (Exception ex)
             {
-                Console.WriteLine("Cannot divide by zero!");
-                return double.NaN; // Return NaN (Not a Number) for division by zero
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+
+            // Ask user if they want to continue
+            Console.WriteLine("Do you want to continue? (Y/N)");
+            char choice = Convert.ToChar(Console.ReadLine());
+
+            if (choice == 'Y' || choice == 'y')
+            {
+                Main(args); // Recursive call to restart the program
             }
         }
     }
 }
-
 
